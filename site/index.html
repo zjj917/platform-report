@@ -301,146 +301,137 @@ body {
 .page-hero {
   padding: 48px 48px 40px;
   border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(20, 20, 25, 0.95) 100%);
-  border: 1px solid var(--border);
-  box-shadow: 0 0 60px rgba(0,0,0,0.4);
+  background: linear-gradient(180deg, rgba(15, 15, 20, 0.98) 0%, rgba(10, 10, 15, 0.95) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 
+    0 0 0 1px rgba(99, 102, 241, 0.1),
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 100px rgba(99, 102, 241, 0.08);
   position: relative;
   overflow: hidden;
 }
 
-/* 多层光晕叠加 */
+/* 底部边缘发光 - 主光效 */
 .page-hero::before {
   content: '';
   position: absolute;
-  top: -60%;
-  right: -30%;
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.08), transparent 60%);
-  animation: pulse-glow 6s ease-in-out infinite;
-  pointer-events: none;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(59, 130, 246, 0.8) 20%,
+    rgba(99, 102, 241, 0.9) 40%,
+    rgba(139, 92, 246, 0.9) 60%,
+    rgba(59, 130, 246, 0.8) 80%,
+    transparent 100%
+  );
+  filter: blur(1px);
+  animation: edge-glow 4s ease-in-out infinite;
 }
 
+/* 底部漫射光晕 */
 .page-hero::after {
   content: '';
   position: absolute;
   bottom: -40%;
-  left: -20%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.05), transparent 60%);
-  animation: pulse-glow 8s ease-in-out infinite reverse;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 300px;
+  background: radial-gradient(ellipse at center bottom, 
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(59, 130, 246, 0.15) 30%,
+    rgba(139, 92, 246, 0.08) 50%,
+    transparent 70%
+  );
+  animation: bottom-glow 6s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* 第三个光晕层 - 右下角紫光 */
-.hero-glow-extra {
-  position: absolute;
-  top: 50%;
-  left: 60%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(ellipse, rgba(167, 139, 250, 0.12), rgba(99, 102, 241, 0.04), transparent 70%);
-  animation: pulse-glow 10s ease-in-out infinite;
-  animation-delay: -3s;
-  pointer-events: none;
-  transform: translateY(-50%);
+@keyframes edge-glow {
+  0%, 100% { 
+    opacity: 0.6; 
+    filter: blur(1px) brightness(1);
+  }
+  50% { 
+    opacity: 1; 
+    filter: blur(2px) brightness(1.3);
+  }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.15) rotate(5deg); }
+@keyframes bottom-glow {
+  0%, 100% { 
+    opacity: 0.7; 
+    transform: translateX(-50%) scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateX(-50%) scale(1.1);
+  }
 }
 
-/* 复杂流光扫过 */
+/* 柔和顶部光晕 */
 .hero-glow {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(99, 102, 241, 0.04) 20%, 
-    rgba(139, 92, 246, 0.08) 40%,
-    rgba(59, 130, 246, 0.06) 50%,
-    rgba(139, 92, 246, 0.08) 60%,
-    rgba(99, 102, 241, 0.04) 80%,
-    transparent 100%
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 200px;
+  background: radial-gradient(ellipse at center top,
+    rgba(99, 102, 241, 0.08) 0%,
+    transparent 60%
   );
-  background-size: 200% 100%;
-  animation: shine 8s linear infinite;
   pointer-events: none;
+  animation: top-glow 8s ease-in-out infinite;
 }
 
-/* 第二道反向流光 */
+@keyframes top-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* 角落柔和光斑 */
+.hero-corner-glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.hero-corner-glow.top-left {
+  top: -100px;
+  left: -100px;
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.hero-corner-glow.bottom-right {
+  bottom: -120px;
+  right: -100px;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* 微妙流光 */
 .hero-glow-2 {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(59, 130, 246, 0.03) 30%, 
-    rgba(99, 102, 241, 0.06) 50%,
-    rgba(59, 130, 246, 0.03) 70%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: shine-reverse 10s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes shine {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes shine-reverse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* 动态光束 */
-.hero-beams {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.hero-beam {
-  position: absolute;
-  width: 2px;
-  height: 150%;
-  background: linear-gradient(180deg, 
+  height: 60%;
+  background: linear-gradient(180deg,
     transparent 0%,
-    rgba(99, 102, 241, 0.4) 30%,
-    rgba(139, 92, 246, 0.6) 50%,
-    rgba(99, 102, 241, 0.4) 70%,
-    transparent 100%
+    rgba(99, 102, 241, 0.02) 50%,
+    rgba(59, 130, 246, 0.04) 100%
   );
-  filter: blur(1px);
-  animation: beam-move 12s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.hero-beam:nth-child(1) { left: 20%; animation-delay: 0s; }
-.hero-beam:nth-child(2) { left: 50%; animation-delay: -4s; width: 3px; }
-.hero-beam:nth-child(3) { left: 75%; animation-delay: -8s; }
-
-@keyframes beam-move {
-  0%, 100% { transform: translateY(-100%) rotate(15deg); opacity: 0; }
-  10% { opacity: 1; }
-  50% { transform: translateY(50%) rotate(15deg); opacity: 0.8; }
-  90% { opacity: 1; }
-  100% { transform: translateY(200%) rotate(15deg); opacity: 0; }
-}
-
-/* 粒子容器 */
+/* 粒子 - 极简 */
 .hero-particles {
   position: absolute;
   top: 0;
@@ -448,171 +439,40 @@ body {
   right: 0;
   bottom: 0;
   pointer-events: none;
-  overflow: hidden;
 }
 
-/* 多个粒子 - 不同大小和速度 */
-.hero-particles::before,
-.hero-particles::after {
-  content: '';
+.hero-particle {
   position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(99, 102, 241, 0.5);
   border-radius: 50%;
-  animation: float-particle 15s ease-in-out infinite;
+  filter: blur(0.5px);
+  animation: float-subtle 20s ease-in-out infinite;
 }
 
-.hero-particles::before {
+.hero-particle:nth-child(1) {
   top: 20%;
-  left: 30%;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.8), transparent 70%);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  left: 15%;
   animation-delay: 0s;
 }
 
-.hero-particles::after {
+.hero-particle:nth-child(2) {
   top: 60%;
-  right: 25%;
-  width: 4px;
-  height: 4px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.8), transparent 70%);
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
-  animation-delay: -5s;
-}
-
-/* 更多粒子元素 */
-.hero-particle {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  animation: float-particle 18s ease-in-out infinite;
-}
-
-.particle-1 {
-  top: 30%;
-  right: 15%;
-  width: 3px;
-  height: 3px;
-  background: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
-  animation-delay: -2s;
-  animation-duration: 20s;
-}
-
-.particle-2 {
-  top: 70%;
-  left: 10%;
-  width: 5px;
-  height: 5px;
-  background: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
-  animation-delay: -7s;
-  animation-duration: 16s;
-}
-
-.particle-3 {
-  top: 45%;
-  left: 60%;
-  width: 2px;
-  height: 2px;
-  background: rgba(167, 139, 250, 0.7);
-  box-shadow: 0 0 5px rgba(167, 139, 250, 0.4);
+  right: 20%;
   animation-delay: -10s;
-  animation-duration: 22s;
+  background: rgba(139, 92, 246, 0.4);
 }
 
-.particle-4 {
-  top: 15%;
-  right: 40%;
-  width: 4px;
-  height: 4px;
-  background: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
-  animation-delay: -3s;
-  animation-duration: 14s;
-}
-
-@keyframes float-particle {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
-  20% { transform: translate(25px, -30px) scale(1.3); opacity: 0.8; }
-  40% { transform: translate(40px, -15px) scale(0.9); opacity: 0.6; }
-  60% { transform: translate(15px, -50px) scale(1.1); opacity: 0.9; }
-  80% { transform: translate(-15px, -25px) scale(1.2); opacity: 0.5; }
-}
-
-/* 扫描线效果 */
-.hero-scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%,
-    rgba(99, 102, 241, 0.3) 30%,
-    rgba(167, 139, 250, 0.5) 50%,
-    rgba(99, 102, 241, 0.3) 70%,
-    transparent 100%
-  );
-  animation: scan 4s linear infinite;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-@keyframes scan {
-  0% { top: 0; opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { top: 100%; opacity: 0; }
-}
-
-/* 呼吸光效边框 */
-.hero-border-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: var(--radius-xl);
-  border: 1px solid transparent;
-  background: linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
-              linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.3)) border-box;
-  animation: border-pulse 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes border-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
-}
-
-/* 角落光斑 */
-.hero-corner-glow {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-}
-
-.hero-corner-glow.top-left {
-  top: -50px;
-  left: -50px;
-  background: rgba(99, 102, 241, 0.15);
-  animation: corner-pulse 6s ease-in-out infinite;
-}
-
-.hero-corner-glow.bottom-right {
-  bottom: -80px;
-  right: -80px;
-  background: rgba(59, 130, 246, 0.12);
-  animation: corner-pulse 8s ease-in-out infinite reverse;
-}
-
-@keyframes corner-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.3); opacity: 0.8; }
+@keyframes float-subtle {
+  0%, 100% { 
+    transform: translate(0, 0); 
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translate(10px, -15px); 
+    opacity: 0.6;
+  }
 }
 
 .title-accent {
@@ -1413,26 +1273,14 @@ a { color: inherit; }
       <!-- 角落光斑 -->
       <div class="hero-corner-glow top-left"></div>
       <div class="hero-corner-glow bottom-right"></div>
-      <!-- 呼吸边框 -->
-      <div class="hero-border-glow"></div>
-      <!-- 流光层 -->
+      <!-- 顶部柔和光晕 -->
       <div class="hero-glow"></div>
+      <!-- 底部渐变 -->
       <div class="hero-glow-2"></div>
-      <div class="hero-glow-extra"></div>
-      <!-- 光束 -->
-      <div class="hero-beams">
-        <div class="hero-beam"></div>
-        <div class="hero-beam"></div>
-        <div class="hero-beam"></div>
-      </div>
-      <!-- 扫描线 -->
-      <div class="hero-scanline"></div>
       <!-- 粒子 -->
       <div class="hero-particles">
-        <div class="hero-particle particle-1"></div>
-        <div class="hero-particle particle-2"></div>
-        <div class="hero-particle particle-3"></div>
-        <div class="hero-particle particle-4"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
       </div>
       <div class="page-hero-eyebrow">
         <span class="eyebrow-chip">Daily Monitor</span>
