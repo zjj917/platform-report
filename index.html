@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Platform Intelligence · 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔭</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Linear-inspired color tokens */
+  --bg-app:      #0F0F10;
+  --bg-surface:  #161618;
+  --bg-elevated: #1C1C1F;
+  --bg-hover:    #222226;
+  --bg-active:   #2A2A2E;
+
+  --border:       rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.10);
+  --border-focus:  rgba(255,255,255,0.20);
+
+  --text-primary:   #F1F0EF;
+  --text-secondary: #9B99A3;
+  --text-tertiary:  #5E5C6B;
+  --text-link:      #8B8CF8;
+
+  --accent:       #6366F1;
+  --accent-hover: #818CF8;
+  --accent-subtle: rgba(99,102,241,0.12);
+
+  --green:  #22C55E;
+  --yellow: #EAB308;
+  --red:    #EF4444;
+  --blue:   #3B82F6;
+  --orange: #F97316;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --sidebar-w: 220px;
+  --header-h:  52px;
+
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+/* ─── App Shell ─── */
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar main";
+  min-height: 100vh;
+}
+
+/* ─── Topbar ─── */
+.topbar {
+  grid-area: topbar;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  padding: 0 16px 0 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-app);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  gap: 0;
+}
+
+.topbar-logo {
+  width: var(--sidebar-w);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  height: 100%;
+}
+
+.logo-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+}
+
+.topbar-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-tertiary);
+  font-size: 12.5px;
+}
+
+.topbar-breadcrumb span { color: var(--text-secondary); }
+.topbar-breadcrumb .sep { opacity: 0.3; }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #4ADE80;
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.15);
+  letter-spacing: 0.2px;
+}
+
+.badge-live::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #4ADE80;
+  animation: pulse-green 2s ease infinite;
+}
+
+@keyframes pulse-green {
+  0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,.4); }
+  50% { opacity:.7; box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+}
+
+.topbar-btn {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.topbar-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  grid-area: sidebar;
+  width: var(--sidebar-w);
+  border-right: 1px solid var(--border);
+  background: var(--bg-app);
+  padding: 12px 0;
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  padding: 0 8px;
+  margin-bottom: 20px;
+}
+
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0 8px 6px;
+  display: block;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 450;
+  transition: all .12s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar-link:hover { background: var(--bg-hover); color: var(--text-primary); }
+.sidebar-link.active { background: var(--bg-active); color: var(--text-primary); font-weight: 500; }
+
+.sidebar-link .icon {
+  font-size: 13px;
+  width: 18px;
+  text-align: center;
+  opacity: .75;
+}
+
+.sidebar-link .count {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0 6px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 8px;
+}
+
+/* ─── Main Content ─── */
+.main {
+  grid-area: main;
+  overflow: hidden;
+  min-height: calc(100vh - var(--header-h));
+}
+
+/* ─── Page Header ─── */
+.page-hero {
+  padding: 40px 40px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.eyebrow-chip {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.eyebrow-sep { color: var(--text-tertiary); opacity: .3; }
+
+.page-hero h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.6px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.page-hero-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+.platform-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.platform-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+}
+
+.platform-pill:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+/* ─── Content Area ─── */
+.content-area {
+  padding: 0 40px 60px;
+}
+
+/* ─── Section ─── */
+.section {
+  padding-top: 40px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-head h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.section-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-tertiary);
+  margin-left: auto;
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+
+/* ─── Platform Block ─── */
+.platform-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--bg-surface);
+  margin-bottom: 28px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+
+.platform-block:hover { border-color: var(--border-strong); }
+
+.platform-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.platform-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+}
+
+.platform-meta h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.platform-meta .url {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+  transition: color .15s;
+}
+
+.platform-meta .url:hover { color: var(--text-link); }
+
+.platform-stats {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--text-tertiary);
+  background: var(--bg-elevated);
+}
+
+.platform-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
+}
+
+.platform-main {
+  border-right: 1px solid var(--border);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.platform-sidebar {
+  padding: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Sub Card ─── */
+.sub-card {}
+
+.sub-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sub-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 14px 0;
+}
+
+/* ─── News List ─── */
+.news-list { display: flex; flex-direction: column; gap: 2px; }
+
+.news-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 10px;
+  border-radius: var(--radius-md);
+  transition: background .12s;
+  cursor: pointer;
+}
+
+.news-item:hover { background: var(--bg-hover); }
+
+.news-num {
+  width: 18px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  padding-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.news-content { flex: 1; min-width: 0; }
+
+.news-title-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color .12s;
+}
+
+.news-title-link:hover { color: var(--text-link); }
+
+.news-summary {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  line-height: 1.55;
+  margin-top: 3px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.news-source-tag {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  color: var(--text-tertiary);
+  background: var(--bg-elevated);
+}
+
+.news-date {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+}
+
+/* ─── Insight ─── */
+.insight {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  border-left: 2px solid var(--accent);
+}
+
+/* ─── Strength List ─── */
+.strength-list { display: flex; flex-direction: column; gap: 4px; }
+
+.strength-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  transition: background .12s;
+}
+
+.strength-item:hover { background: var(--bg-hover); }
+
+.strength-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 5.5px;
+}
+
+/* ─── Tag Cloud ─── */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.dir-tag {
+  font-size: 11px;
+  font-weight: 450;
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid;
+  transition: all .15s;
+  cursor: default;
+}
+
+.rival-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+}
+
+/* ─── Matrix Section ─── */
+.matrix-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--bg-surface);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.matrix-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.matrix-head h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* View toggle */
+.view-toggle {
+  display: flex;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-left: auto;
+}
+
+.view-btn {
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: var(--font);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.view-btn:hover { color: var(--text-secondary); }
+
+.view-btn.active {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* Matrix Table */
+.matrix-table-wrap { overflow-x: auto; }
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix-table th {
+  padding: 10px 18px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.matrix-table td {
+  padding: 11px 18px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.matrix-table tr:last-child td { border-bottom: none; }
+.matrix-table tbody tr:hover td { background: var(--bg-hover); }
+
+.dim-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Score dots */
+.score-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dots { display: inline-flex; gap: 3px; }
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transition: transform .1s;
+}
+
+.dot-on { opacity: 0.85; }
+.dot-off { opacity: 0.1; }
+
+.score-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Radar View */
+.radar-view {
+  display: none;
+  padding: 28px 32px 32px;
+}
+
+.radar-view.active { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+
+.radar-legend { display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background .12s;
+}
+
+.legend-item:hover { background: var(--bg-hover); }
+
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name { font-weight: 500; flex: 1; }
+.legend-avg { font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+/* Radar axis labels */
+.radar-wrap { position: relative; }
+.radar-axis-label {
+  position: absolute;
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  letter-spacing: 0.1px;
+}
+
+/* ─── Footer ─── */
+.page-footer {
+  padding: 28px 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-note {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+}
+
+.footer-brand {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .platform-body { grid-template-columns: 1fr; }
+  .platform-main { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+@media (max-width: 860px) {
+  :root { --sidebar-w: 0px; }
+  .app-shell { grid-template-columns: 1fr; grid-template-areas: "topbar" "main"; }
+  .sidebar { display: none; }
+  .topbar-logo { width: auto; border-right: none; }
+  .content-area { padding: 0 20px 40px; }
+  .page-hero { padding: 24px 20px 20px; }
+  .page-hero h1 { font-size: 20px; }
+}
+
+/* ─── Animations ─── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.platform-block {
+  animation: fade-up .3s ease both;
+}
+
+.platform-block:nth-child(1) { animation-delay: .05s; }
+.platform-block:nth-child(2) { animation-delay: .10s; }
+.platform-block:nth-child(3) { animation-delay: .15s; }
+.platform-block:nth-child(4) { animation-delay: .20s; }
+
+/* ─── Misc Utility ─── */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+}
+
+a { color: inherit; }
+
+.text-green  { color: var(--green);  }
+.text-yellow { color: var(--yellow); }
+.text-red    { color: var(--red);    }
+.text-blue   { color: var(--blue);   }
+.text-orange { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ───────────── TOPBAR ───────────── -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🔭</div>
+      <span class="logo-text">PlatformIQ</span>
+    </div>
+    <div class="topbar-center">
+      <nav class="topbar-breadcrumb">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span>Marketing</span>
+        <span class="sep">/</span>
+        <span style="color:var(--text-primary)">Platform Intelligence</span>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="badge-live">LIVE</div>
+      <a href="#competitive-matrix" class="topbar-btn">⚡ Matrix</a>
+      <a href="#bilibili_huohuo" class="topbar-btn">📺 B站花火</a>
+      <a href="#douyin_xingtu" class="topbar-btn">🌟 巨量星图</a>
+      <a href="#xiaohongshu_pugongying" class="topbar-btn">📕 蒲公英</a>
+      <a href="#kuaishou_cilijuXing" class="topbar-btn">⚡ 磁力聚星</a>
+    </div>
+  </header>
+
+  <!-- ───────────── SIDEBAR ───────────── -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Overview</span>
+      <a href="#competitive-matrix" class="sidebar-link active">
+        <span class="icon">⚡</span> Competitive Matrix
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Platforms</span>
+      <a href="#bilibili_huohuo" class="sidebar-link">
+        <span class="icon">📺</span> B站花火
+        <span class="count">8</span>
+      </a>
+      <a href="#douyin_xingtu" class="sidebar-link">
+        <span class="icon">🌟</span> 巨量星图
+        <span class="count">8</span>
+      </a>
+      <a href="#xiaohongshu_pugongying" class="sidebar-link">
+        <span class="icon">📕</span> 小红书蒲公英
+        <span class="count">8</span>
+      </a>
+      <a href="#kuaishou_cilijuXing" class="sidebar-link">
+        <span class="icon">⚡</span> 快手磁力聚星
+        <span class="count">8</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Meta</span>
+      <div class="sidebar-link">
+        <span class="icon">🕐</span> 更新于 11:00
+      </div>
+      <div class="sidebar-link">
+        <span class="icon">📊</span> 32 条信息
+      </div>
+    </div>
+  </nav>
+
+  <!-- ───────────── MAIN ───────────── -->
+  <main class="main">
+
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="page-hero-eyebrow">
+        <span class="eyebrow-chip">Daily Monitor</span>
+        <span class="eyebrow-sep">·</span>
+        <span class="eyebrow-chip">2026-03-27</span>
+      </div>
+      <h1>Platform Intelligence</h1>
+      <p class="page-hero-desc">
+        追踪 B站花火、巨量星图、小红书蒲公英、快手磁力聚星的最新动态与市场洞察。
+        每日 11:00 自动更新，数据来源于公开信息聚合。
+      </p>
+      <div class="platform-pills">
+        <a href="#bilibili_huohuo" class="platform-pill">📺 B站花火</a>
+        <a href="#douyin_xingtu" class="platform-pill">🌟 巨量星图</a>
+        <a href="#xiaohongshu_pugongying" class="platform-pill">📕 小红书蒲公英</a>
+        <a href="#kuaishou_cilijuXing" class="platform-pill">⚡ 快手磁力聚星</a>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- ── Competitive Matrix ── -->
+      <div class="section" id="competitive-matrix">
+        <div class="section-head">
+          <h2>Competitive Matrix</h2>
+          <span class="section-tag">4 Platforms · 8 Dimensions</span>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="matrix-block">
+          <div class="matrix-head">
+            <h2>平台综合评分矩阵</h2>
+            <div class="view-toggle">
+              <button class="view-btn active" id="btn-table" onclick="switchView('table')">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="0" y="0" width="5" height="5" rx="1"/><rect x="7" y="0" width="5" height="5" rx="1"/><rect x="0" y="7" width="5" height="5" rx="1"/><rect x="7" y="7" width="5" height="5" rx="1"/></svg>
+                表格
+              </button>
+              <button class="view-btn" id="btn-radar" onclick="switchView('radar')">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="6,1 11,3.8 11,8.2 6,11 1,8.2 1,3.8"/></svg>
+                雷达图
+              </button>
+            </div>
+          </div>
+
+          <div id="view-table">
+            <div class="matrix-table-wrap">
+              <table class="matrix-table">
+                <thead>
+                  <tr>
+                    <th>维度</th>
+                    <th style="color:#00A1D6">📺 B站花火</th>
+                    <th style="color:#FE2C55">🌟 巨量星图</th>
+                    <th style="color:#FF2442">📕 蒲公英</th>
+                    <th style="color:#FF6900">⚡ 磁力聚星</th>
+                  </tr>
+                </thead>
+                <tbody id="matrix-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="radar-view" id="view-radar">
+            <div class="radar-wrap" id="radar-svg-wrap" style="width:380px;height:380px"><!-- SVG injected by JS --></div>
+            <div class="radar-legend">
+              <div class="legend-item" onmouseenter="radarHL('bilibili',true)" onmouseleave="radarHL('bilibili',false)">
+                <div class="legend-dot" style="background:#00A1D6"></div>
+                <span class="legend-name">📺 B站花火</span>
+                <span class="legend-avg">avg 3.8</span>
+              </div>
+              <div class="legend-item" onmouseenter="radarHL('douyin',true)" onmouseleave="radarHL('douyin',false)">
+                <div class="legend-dot" style="background:#FE2C55"></div>
+                <span class="legend-name">🌟 巨量星图</span>
+                <span class="legend-avg">avg 4.2</span>
+              </div>
+              <div class="legend-item" onmouseenter="radarHL('xhs',true)" onmouseleave="radarHL('xhs',false)">
+                <div class="legend-dot" style="background:#FF2442"></div>
+                <span class="legend-name">📕 小红书蒲公英</span>
+                <span class="legend-avg">avg 3.9</span>
+              </div>
+              <div class="legend-item" onmouseenter="radarHL('ks',true)" onmouseleave="radarHL('ks',false)">
+                <div class="legend-dot" style="background:#FF6900"></div>
+                <span class="legend-name">⚡ 快手磁力聚星</span>
+                <span class="legend-avg">avg 3.6</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── B站花火 ── -->
+      <div class="section" id="bilibili_huohuo">
+        <div class="section-head">
+          <h2>B站花火</h2>
+          <span class="section-tag">8 条动态 · 4 条反馈</span>
+        </div>
+        <div class="section-divider"></div>
+        <div class="platform-block">
+          <div class="platform-header">
+            <div class="platform-icon">📺</div>
+            <div class="platform-meta">
+              <h3>哔哩哔哩花火</h3>
+              <a href="https://huohuo.bilibili.com" target="_blank" class="url">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7"/></svg>
+                huohuo.bilibili.com
+              </a>
+            </div>
+            <div class="platform-stats">
+              <span class="stat-pill"><span class="text-green">●</span> 8 Updates</span>
+              <span class="stat-pill"><span style="color:var(--accent)">●</span> 4 Feedback</span>
+            </div>
+          </div>
+          <div class="platform-body">
+            <div class="platform-main">
+              <div class="sub-card">
+                <div class="sub-card-title">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" opacity=".5"><circle cx="6" cy="6" r="5"/></svg>
+                  Latest Updates
+                </div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://huahuo.bilibili.com/" target="_blank">B站花火平台开放全行业商业合作，全链路线上化交易升级</a><p class="news-summary">哔哩哔哩花火平台面向全行业开放，助力品牌批量触达、筛选、匹配意向合作UP主，提供安全高效的全链路线上化交易。</p><div class="news-footer"><span class="news-source-tag">B站花火官网</span><span class="news-date">2026-03-24</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/933710748_121834137" target="_blank">【哔哩哔哩×花火】X火计划营销通案2025：种草到转化全链路闭环</a><p class="news-summary">哔哩哔哩营销中心与花火平台联合发布X火计划营销通案，旨在助力品牌实现内容种草到交易转化的链路闭环。</p><div class="news-footer"><span class="news-source-tag">搜狐</span><span class="news-date">2025-09-10</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.vzkoo.com/read/202509166bdf2b26ce3766b871892e93.html" target="_blank">2025年B站花火平台营销生态分析：UP主商业合作规模同比增长</a><p class="news-summary">UP主商业合作规模同比显著增长，不同品类基于产品特性发展出差异化内容策略，尊重社区文化实现商业与用户体验的双赢。</p><div class="news-footer"><span class="news-source-tag">vzkoo.com</span><span class="news-date">2025-09-16</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.bilibili.com/blackboard/activity-WYG9AyESgK.html" target="_blank">花火平台优化通知第二期：全方位优化UP主侧产品能力</a><p class="news-summary">平台将长期致力于全方位优化UP主侧的平台产品能力，在入驻指引、接单执行、结算效率等各方面持续改进。</p><div class="news-footer"><span class="news-source-tag">B站官方</span><span class="news-date">2025-06</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://news.qq.com/rain/a/20231013A07KLA00" target="_blank">哔哩哔哩「花火」平台6大能力升级：效果分成、评论区蓝链等</a><p class="news-summary">新增「效果分成」两大售卖模式：「按实际播放」和「按互动」计费，助力UP主提升内容商业化效率。</p><div class="news-footer"><span class="news-source-tag">腾讯新闻</span><span class="news-date">2023-10-13</span></div></div></div>
+                  <div class="news-item"><div class="news-num">06</div><div class="news-content"><a class="news-title-link" href="https://www.vzkoo.com/read/20250910ff969d1ead3ab98bc3d62926.html" target="_blank">2025年社交媒体腰部达人商业化研究：B站商业化率多维度分析</a><p class="news-summary">深入分析2024-2025年腰部达人在B站等主流平台的发展现状，为创作者选择平台提供参考。</p><div class="news-footer"><span class="news-source-tag">vzkoo.com</span><span class="news-date">2025-09-10</span></div></div></div>
+                  <div class="news-item"><div class="news-num">07</div><div class="news-content"><a class="news-title-link" href="https://www.bilibili.com/opus/851511467262869520" target="_blank">花火平台升级：评论区蓝链支持外跳小程序，电商转化进一步强化</a><p class="news-summary">评论区蓝链新支持外跳小程序，极大拓展了品牌的电商跳转能力，帮助实现更高效的商业转化。</p><div class="news-footer"><span class="news-source-tag">B站</span><span class="news-date">2025-03</span></div></div></div>
+                  <div class="news-item"><div class="news-num">08</div><div class="news-content"><a class="news-title-link" href="https://socialbeta.com/campaign/13105" target="_blank">花火平台不向UP主收取提成，差异化优势持续吸引创作者入驻</a><p class="news-summary">平台不向UP主收取提成而向品牌方收费的模式，是其区别于同类平台的核心差异化优势。</p><div class="news-footer"><span class="news-source-tag">SocialBeta</span><span class="news-date">2025-01</span></div></div></div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"><path d="M6 1v5l3 3"/><circle cx="6" cy="6" r="5"/></svg>
+                  User Feedback
+                </div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://www.zhihu.com/question/405683479" target="_blank">如何看待B站对外开放花火商业合作平台？</a><p class="news-summary">花火平台不向UP主收提成受到广泛欢迎，但也有创作者反映粉丝门槛较高。</p><div class="news-footer"><span class="news-source-tag">知乎</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://www.php.cn/faq/1729833.html" target="_blank">B站花火商单开通详细步骤：粉丝1万以上可申请</a><p class="news-summary">需先满足实名认证、粉丝超1万等条件，整体流程较为规范。</p><div class="news-footer"><span class="news-source-tag">php中文网</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/482711791_260616" target="_blank">一年了，B站UP主商业化做得怎样？花火平台创作者真实评价</a><p class="news-summary">部分UP主反映接单量偏少，品牌预算集中在头部UP主，腰尾部创作者商业机会仍有待提升。</p><div class="news-footer"><span class="news-source-tag">搜狐</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://zhidao.baidu.com/question/528544798651029165.html" target="_blank">b站花火接单平台使用体验分享：结算效率有所提升</a><p class="news-summary">2025年结算效率明显改善，通过链接优质创作者与品牌，提供便捷、安全、有效的合作环境。</p><div class="news-footer"><span class="news-source-tag">百度知道</span></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="platform-sidebar">
+              <div class="sub-card">
+                <div class="sub-card-title">Core Strengths</div>
+                <div class="strength-list">
+                  <div class="strength-item"><span class="strength-dot"></span>Z世代核心用户群体，社区信任度极高</div>
+                  <div class="strength-item"><span class="strength-dot"></span>UP主粉丝粘性强，中长视频种草转化效果突出</div>
+                  <div class="strength-item"><span class="strength-dot"></span>弹幕互动文化独特，品牌植入接受度高</div>
+                  <div class="strength-item"><span class="strength-dot"></span>数据追踪工具完善（B站指数、花火后台）</div>
+                  <div class="strength-item"><span class="strength-dot"></span>二次元/科技/泛知识垂直领域内容生态领先</div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Product Roadmap</div>
+                <div class="tag-cloud">
+                  <span class="dir-tag" style="border-color:rgba(0,161,214,.25);color:#00A1D6;background:rgba(0,161,214,.06)">UP主商业化工具升级</span>
+                  <span class="dir-tag" style="border-color:rgba(0,161,214,.25);color:#00A1D6;background:rgba(0,161,214,.06)">X火计划营销闭环</span>
+                  <span class="dir-tag" style="border-color:rgba(0,161,214,.25);color:#00A1D6;background:rgba(0,161,214,.06)">效果分成模式</span>
+                  <span class="dir-tag" style="border-color:rgba(0,161,214,.25);color:#00A1D6;background:rgba(0,161,214,.06)">评论区蓝链跳转</span>
+                  <span class="dir-tag" style="border-color:rgba(0,161,214,.25);color:#00A1D6;background:rgba(0,161,214,.06)">直播带货整合</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Competitors</div>
+                <div class="tag-cloud">
+                  <span class="rival-tag">巨量星图</span>
+                  <span class="rival-tag">小红书蒲公英</span>
+                  <span class="rival-tag">快手磁力聚星</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="insight">
+                B站花火2025–2026年持续迭代，X火计划实现种草-转化闭环，效果分成和评论区蓝链强化电商转化。不向UP主收佣金是核心差异化优势，品牌侧全链路线上化交易提效明显。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 巨量星图 ── -->
+      <div class="section" id="douyin_xingtu">
+        <div class="section-head">
+          <h2>巨量星图</h2>
+          <span class="section-tag">8 条动态 · 5 条反馈</span>
+        </div>
+        <div class="section-divider"></div>
+        <div class="platform-block">
+          <div class="platform-header">
+            <div class="platform-icon">🌟</div>
+            <div class="platform-meta">
+              <h3>抖音巨量星图</h3>
+              <a href="https://www.xingtu.cn" target="_blank" class="url">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7"/></svg>
+                www.xingtu.cn
+              </a>
+            </div>
+            <div class="platform-stats">
+              <span class="stat-pill"><span class="text-green">●</span> 8 Updates</span>
+              <span class="stat-pill"><span style="color:var(--accent)">●</span> 5 Feedback</span>
+            </div>
+          </div>
+          <div class="platform-body">
+            <div class="platform-main">
+              <div class="sub-card">
+                <div class="sub-card-title">Latest Updates</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://www.businessnews.cn/2026/03/25/16439.html" target="_blank">巨量星图「2026年味加码」IP塑造新春营销新范式，情绪共鸣到商业转化闭环</a><p class="news-summary">从国民情绪共鸣到商业价值转化的闭环。通过激发用户对「团圆、年俗、氛围」的共创，在动态开屏、H5会场等关键触点营造沉浸体验。</p><div class="news-footer"><span class="news-source-tag">商业观察</span><span class="news-date">2026-03-25</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://5gcenter.huanqiu.com/article/4ANBnu4JfCt" target="_blank">因为创作，所以影响：巨量星图持续进化，AIGC工具链不断丰富</a><p class="news-summary">从2018年9月上线以来持续进化，从转化组件上线到明星入驻，再到AIGC创作工具，已成为达人营销领域最成熟的产品平台。</p><div class="news-footer"><span class="news-source-tag">环球网</span><span class="news-date">2026-02-26</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.10100.com/article/35379251" target="_blank">巨量星图「星广联投」10月上新月报：投放管理、素材运营、数据洞察三维度升级</a><p class="news-summary">自动优选支持投放场景智能选择；新增素材标签分组管理；数据大盘新增平台对比视图；支持批量修改竞价；达人广场新增ROI预估功能。</p><div class="news-footer"><span class="news-source-tag">大数跨境</span><span class="news-date">2025-11-21</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.toutiao.com/article/7479034414291239459/" target="_blank">2025巨量星图达人节：建立达人营销标准化体系，好内容成就好品牌</a><p class="news-summary">巨量星图公布了一系列产品和能力升级，助力品牌全方位提升内容营销能力。</p><div class="news-footer"><span class="news-source-tag">今日头条</span><span class="news-date">2025-03-07</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://finance.sina.com.cn/tech/roll/2025-02-28/doc-inemzuik9845090.shtml" target="_blank">达人营销正当时，巨量星图用「标准」求变：建立行业标准化体系</a><p class="news-summary">星图正式建立达人营销标准化体系。热点趋势频频霸榜让品牌商家敏锐洞察，通过标准化推动营销效率提升。</p><div class="news-footer"><span class="news-source-tag">新浪财经</span><span class="news-date">2025-02-28</span></div></div></div>
+                  <div class="news-item"><div class="news-num">06</div><div class="news-content"><a class="news-title-link" href="https://agent.oceanengine.com/support/content/6876700930" target="_blank">巨量星图产品能力升级：看后搜营销目标优化、短直联动能力增强</a><p class="news-summary">星晓计划达人标签功能更新，看后搜营销目标产品优化，短直联动能力增强，「新面孔达人」标签Playbook发布。</p><div class="news-footer"><span class="news-source-tag">巨量引擎官方</span><span class="news-date">2025-10</span></div></div></div>
+                  <div class="news-item"><div class="news-num">07</div><div class="news-content"><a class="news-title-link" href="https://goods.taobao.com/t/daiyunying_16960/c487472e9685d295a8d8a08c0de73459.html" target="_blank">巨量星图25年全面解析：达人报价更透明、广告数据追踪更精准</a><p class="news-summary">达人报价透明度提升，广告数据追踪精准度大幅优化，平台使用门槛降低，中小品牌商投放需求显著增长。</p><div class="news-footer"><span class="news-source-tag">行业分析</span><span class="news-date">2025-09-02</span></div></div></div>
+                  <div class="news-item"><div class="news-num">08</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/894104802_121752158" target="_blank">2025巨量引擎品牌广告产品营销手册：全域营销整合能力升级</a><p class="news-summary">2025年巨量引擎品牌广告产品矩阵日趋完善，全域营销整合能力持续升级，在DAU增长和商业化双线提速。</p><div class="news-footer"><span class="news-source-tag">搜狐</span><span class="news-date">2025-05-12</span></div></div></div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">User Feedback</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://www.douyin.com/search/%E6%8A%96%E9%9F%B3%E5%88%9B%E4%BD%9C%E8%80%85%E5%A6%82%E4%BD%95%E5%9C%A8%E5%B7%A8%E9%87%8F%E6%98%9F%E5%9B%BE%E4%B8%8A%E6%8E%A5%E4%BB%BB%E5%8A%A1%E8%B5%9A%E9%92%B1" target="_blank">抖音创作者如何在巨量星图上接任务赚钱——星途达人团长模式解析</a><p class="news-summary">团长可获得团员收益5%的额外奖励，激励创作者形成营销合作网络。</p><div class="news-footer"><span class="news-source-tag">抖音</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://www.php.cn/faq/1721128.html" target="_blank">抖音星图任务怎么接？入驻门槛与接单操作指南2025版</a><p class="news-summary">2025年门槛有所调整，通过审核后达人可在星图任务大厅浏览和接受品牌方发布的商单任务，结算效率较高。</p><div class="news-footer"><span class="news-source-tag">php中文网</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/846640263_121850900" target="_blank">如何开通抖音巨量星图：2025年主要变现渠道全解析</a><p class="news-summary">2025年平台功能升级后，通过接商单、品牌合作等方式实现内容变现的路径更加多元和规范。</p><div class="news-footer"><span class="news-source-tag">搜狐</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.ufcn.cn/article/2269809.html" target="_blank">巨量星图结算与提现全流程：个体达人72小时到账，MCN按协议分账</a><p class="news-summary">个体达人需自主完成实名及提现设置，72小时内到账；MCN达人收益默认结至机构账户，分账依协议执行。</p><div class="news-footer"><span class="news-source-tag">北冥有鱼</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://zhuanlan.zhihu.com/p/563562680" target="_blank">关于抖音星图的达人评价：连接创作者和广告主、平台背书安全性高</a><p class="news-summary">星图是达人接单、获取收益、内容变现的服务平台。达人普遍反映接单流程规范，但头部达人竞争激烈。</p><div class="news-footer"><span class="news-source-tag">知乎</span></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="platform-sidebar">
+              <div class="sub-card">
+                <div class="sub-card-title">Core Strengths</div>
+                <div class="strength-list">
+                  <div class="strength-item"><span class="strength-dot" style="background:#FE2C55"></span>抖音日活超7亿，达人库规模行业第一</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FE2C55"></span>算法推荐精准，达人匹配效率行业领先</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FE2C55"></span>巨量引擎全域营销整合，一站式投放体验</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FE2C55"></span>短视频+直播双引擎，电商闭环最完善</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FE2C55"></span>AIGC工具链丰富（剪映、即创等）</div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Product Roadmap</div>
+                <div class="tag-cloud">
+                  <span class="dir-tag" style="border-color:rgba(254,44,85,.25);color:#FE2C55;background:rgba(254,44,85,.06)">AIGC创作工具</span>
+                  <span class="dir-tag" style="border-color:rgba(254,44,85,.25);color:#FE2C55;background:rgba(254,44,85,.06)">全域营销闭环</span>
+                  <span class="dir-tag" style="border-color:rgba(254,44,85,.25);color:#FE2C55;background:rgba(254,44,85,.06)">星广联投升级</span>
+                  <span class="dir-tag" style="border-color:rgba(254,44,85,.25);color:#FE2C55;background:rgba(254,44,85,.06)">看后搜优化</span>
+                  <span class="dir-tag" style="border-color:rgba(254,44,85,.25);color:#FE2C55;background:rgba(254,44,85,.06)">短直联动</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Competitors</div>
+                <div class="tag-cloud">
+                  <span class="rival-tag">B站花火</span>
+                  <span class="rival-tag">小红书蒲公英</span>
+                  <span class="rival-tag">快手磁力聚星</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="insight" style="border-left-color:#FE2C55">
+                巨量星图2025–2026年持续深化AIGC工具建设，星广联投、看后搜等新功能显著提升投放效率。2026年味加码IP成功完成从情绪共鸣到商业转化的闭环。整体商业化成熟度行业领先。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 小红书蒲公英 ── -->
+      <div class="section" id="xiaohongshu_pugongying">
+        <div class="section-head">
+          <h2>小红书蒲公英</h2>
+          <span class="section-tag">8 条动态 · 5 条反馈</span>
+        </div>
+        <div class="section-divider"></div>
+        <div class="platform-block">
+          <div class="platform-header">
+            <div class="platform-icon">📕</div>
+            <div class="platform-meta">
+              <h3>小红书蒲公英</h3>
+              <a href="https://pgy.xiaohongshu.com" target="_blank" class="url">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7"/></svg>
+                pgy.xiaohongshu.com
+              </a>
+            </div>
+            <div class="platform-stats">
+              <span class="stat-pill"><span class="text-green">●</span> 8 Updates</span>
+              <span class="stat-pill"><span style="color:var(--accent)">●</span> 5 Feedback</span>
+            </div>
+          </div>
+          <div class="platform-body">
+            <div class="platform-main">
+              <div class="sub-card">
+                <div class="sub-card-title">Latest Updates</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://help.reditorapp.com/content/260104" target="_blank">小红书2026年平台功能大更新：合作广场、撬客管理、KOS员工号等10项调整</a><p class="news-summary">涵盖广告投放、客户管理、合作广场、撬客管理、KOS员工号等10项重要功能调整，进一步完善商业化基础设施。</p><div class="news-footer"><span class="news-source-tag">Reditor帮助</span><span class="news-date">2026-01</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://www.xiao-ad.com/jd/2510.html" target="_blank">小红书蒲公英平台升级产品手册：博主投前评估页面重构，数据参考更丰富</a><p class="news-summary">博主投前评估页面重构，阅读中位数、互动中位数、直播销售总额等数据表现供参考，合作流程持续优化提效。</p><div class="news-footer"><span class="news-source-tag">小红书广告平台</span><span class="news-date">2026-01-23</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.woshipm.com/share/6358899.html" target="_blank">小红书正式进入商业流量时代：付费内容获得流量优先权，2026年经营趋势预判</a><p class="news-summary">付费内容在流量分配上拥有了「优先通行权」，平台的推荐算法会优先保障付费且内容优质的内容获得更多曝光。</p><div class="news-footer"><span class="news-source-tag">人人都是产品经理</span><span class="news-date">2026-03-19</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://k.sina.cn/article_7879848900_1d5acf3c401902t3iw.html" target="_blank">2026小红书运营全攻略：情绪营销升级为科学方法论</a><p class="news-summary">2026年，小红书将情绪营销升级为科学方法论。商品能否提供功能之外的情绪价值，成为消费决策的重要因素。</p><div class="news-footer"><span class="news-source-tag">新浪号</span><span class="news-date">2026-03-20</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://www.digitaling.com/articles/1443427.html" target="_blank">一文讲透小红书2026年平台趋势：红猫计划、红京计划、种草直达加速商业化</a><p class="news-summary">回顾2025年，红猫计划、红京计划、种草直达等系列动作显示小红书商业化进程动态加速，平台始终坚守社区底色。</p><div class="news-footer"><span class="news-source-tag">数英</span><span class="news-date">2025-12-22</span></div></div></div>
+                  <div class="news-item"><div class="news-num">06</div><div class="news-content"><a class="news-title-link" href="https://baijiahao.baidu.com/s?id=1860077656020019468" target="_blank">2026年主流小红书推广：营销市场规模达350亿元，同比增长48%</a><p class="news-summary">小红书营销市场规模已达350亿元，同比增长48%，蒲公英平台成为品牌种草的核心阵地，矩阵式营销生态崛起。</p><div class="news-footer"><span class="news-source-tag">百家号</span><span class="news-date">2026-03</span></div></div></div>
+                  <div class="news-item"><div class="news-num">07</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/968496983_624051" target="_blank">蒲公英/聚光/千帆/薯条/灵犀/种草Aid：小红书2026年六大商业产品全解析</a><p class="news-summary">一次性搞懂小红书6大商业产品的真实用法：蒲公英（达人合作）、聚光（付费推广）、千帆（数据分析）、薯条（内容加热）等。</p><div class="news-footer"><span class="news-source-tag">搜狐</span><span class="news-date">2025-12-23</span></div></div></div>
+                  <div class="news-item"><div class="news-num">08</div><div class="news-content"><a class="news-title-link" href="https://zhuanlan.zhihu.com/p/1966155409132877743" target="_blank">2025第三季度小红书平台新变动全梳理：商业化策略、算法调整多维度解析</a><p class="news-summary">小红书平台的生态变化频繁而深入，已成为品牌与创作者争夺的「流量高地」，蒲公英报备合作规范性要求显著提高。</p><div class="news-footer"><span class="news-source-tag">知乎专栏</span><span class="news-date">2025-10-27</span></div></div></div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">User Feedback</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://zhuanlan.zhihu.com/p/1914386362947314623" target="_blank">新手必看！蒲公英品牌合作下单全流程拆解：从接单到发布完整操作</a><p class="news-summary">接收合作邀约→确认合作条款→创作内容→提交审核→发布上线→等待结算。整体流程较规范，但部分博主反映审核周期较长。</p><div class="news-footer"><span class="news-source-tag">知乎</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://blog.csdn.net/weixin_29207533/article/details/158412991" target="_blank">小红书品牌合作全流程解析：从接单到结算的实战指南（2026版）</a><p class="news-summary">详细解析小红书博主通过蒲公英平台进行品牌合作的全流程实战指南，2026年流程更加规范。</p><div class="news-footer"><span class="news-source-tag">CSDN</span><span class="news-date">2026-02-26</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.1984nian.com/Promotion-xueye/8973.html" target="_blank">小红书蒲公英接单全攻略：开通条件、报价策略与变现指南</a><p class="news-summary">创作者普遍认可平台安全性，但反映报价空间受限、品牌议价较强。</p><div class="news-footer"><span class="news-source-tag">学也网</span><span class="news-date">2025-08-21</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/959715546_122568728" target="_blank">小红书蒲公英平台操作流程日趋标准化：规范性要求显著提高</a><p class="news-summary">随着规则体系不断细化，平台对合作全流程的规范性要求显著提高。</p><div class="news-footer"><span class="news-source-tag">搜狐</span><span class="news-date">2025-11-29</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://pgy.xiaohongshu.com/help/docs" target="_blank">小红书蒲公英帮助中心：星粉直达产品政策更新，明星合作须有代言合同</a><p class="news-summary">明星走「星粉直达」产品下单需有代言或合作合同，政策持续细化规范明星商业合作流程。</p><div class="news-footer"><span class="news-source-tag">蒲公英官方</span></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="platform-sidebar">
+              <div class="sub-card">
+                <div class="sub-card-title">Core Strengths</div>
+                <div class="strength-list">
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF2442"></span>种草心智最强的生活方式社区，消费决策影响力突出</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF2442"></span>搜索转化率高，用户主动获取品牌信息的首选平台</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF2442"></span>女性用户占比高，美妆/时尚/家居等垂类内容领先</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF2442"></span>笔记+视频双形态，图文种草效率独特</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF2442"></span>社区氛围真实，UGC内容信任度高</div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Product Roadmap</div>
+                <div class="tag-cloud">
+                  <span class="dir-tag" style="border-color:rgba(255,36,66,.25);color:#FF2442;background:rgba(255,36,66,.06)">种草直达</span>
+                  <span class="dir-tag" style="border-color:rgba(255,36,66,.25);color:#FF2442;background:rgba(255,36,66,.06)">KOS员工号</span>
+                  <span class="dir-tag" style="border-color:rgba(255,36,66,.25);color:#FF2442;background:rgba(255,36,66,.06)">合作广场升级</span>
+                  <span class="dir-tag" style="border-color:rgba(255,36,66,.25);color:#FF2442;background:rgba(255,36,66,.06)">聚光广告</span>
+                  <span class="dir-tag" style="border-color:rgba(255,36,66,.25);color:#FF2442;background:rgba(255,36,66,.06)">灵犀AI工具</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Competitors</div>
+                <div class="tag-cloud">
+                  <span class="rival-tag">巨量星图</span>
+                  <span class="rival-tag">B站花火</span>
+                  <span class="rival-tag">快手磁力聚星</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="insight" style="border-left-color:#FF2442">
+                小红书蒲公英2025–2026年商业化强势加速，营销市场规模达350亿元（+48%）。2026年正式进入商业流量时代，付费内容获得流量优先权。情绪营销升级为科学方法论，平台平衡商业化与社区底色。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 快手磁力聚星 ── -->
+      <div class="section" id="kuaishou_cilijuXing">
+        <div class="section-head">
+          <h2>快手磁力聚星</h2>
+          <span class="section-tag">8 条动态 · 4 条反馈</span>
+        </div>
+        <div class="section-divider"></div>
+        <div class="platform-block">
+          <div class="platform-header">
+            <div class="platform-icon">⚡</div>
+            <div class="platform-meta">
+              <h3>快手磁力聚星</h3>
+              <a href="https://k.kuaishou.com" target="_blank" class="url">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7"/></svg>
+                k.kuaishou.com
+              </a>
+            </div>
+            <div class="platform-stats">
+              <span class="stat-pill"><span class="text-green">●</span> 8 Updates</span>
+              <span class="stat-pill"><span style="color:var(--accent)">●</span> 4 Feedback</span>
+            </div>
+          </div>
+          <div class="platform-body">
+            <div class="platform-main">
+              <div class="sub-card">
+                <div class="sub-card-title">Latest Updates</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://tech.huanqiu.com/article/403EkZOcxlH" target="_blank">快手磁力聚星产品全面升级：重塑平台体验，全周期服务提升达人与品牌连接效率</a><p class="news-summary">升级后的磁力聚星重塑了平台体验，为客户提供全周期服务，基于全域分发优质内容，助力内容和生意一拍即合。</p><div class="news-footer"><span class="news-source-tag">环球网</span><span class="news-date">2026-01-27</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://finance.sina.com.cn/tech/roll/2025-12-02/doc-infzkwrm0402368.shtml" target="_blank">2026快手磁力引擎品牌营销推介会：AI技术落地、品聚营销、内容三大方向</a><p class="news-summary">2026年快手品牌营销将重点聚焦「AI技术走向落地、品聚营销交付生意、内容」三大方向，全面提升营销ROI。</p><div class="news-footer"><span class="news-source-tag">新浪财经</span><span class="news-date">2025-12-02</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://zhuanlan.zhihu.com/p/1981335839679223679" target="_blank">2026快手品牌营销走向经营：更科学的营销策略、更AI的品牌广告</a><p class="news-summary">磁力聚星助力品牌生意与声量双增长，更优质的达人及内容为品牌营销提供新动能。</p><div class="news-footer"><span class="news-source-tag">知乎</span><span class="news-date">2025-12-08</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.sohu.com/a/962710235_121808583" target="_blank">快手CNY互动营销升级：大曝光+互动营销+长效经营三维布局</a><p class="news-summary">聚焦春节互动场景，从大曝光、互动营销、长效经营三个方面，实现春节营销价值最大化。</p><div class="news-footer"><span class="news-source-tag">搜狐</span><span class="news-date">2025-12-08</span></div></div></div>
+                  <div class="news-item"><div class="news-num">05</div><div class="news-content"><a class="news-title-link" href="https://cxgn.cn/ci-li-ju-xing" target="_blank">磁力聚星官方定位升级：内容与生意连接枢纽，构建三方生态</a><p class="news-summary">解决找达人难、合作不透明、效果难评估三大痛点，构建客户-代理商-达人三方生态，打通公私域流量。</p><div class="news-footer"><span class="news-source-tag">磁力聚星官网</span><span class="news-date">2026-03-20</span></div></div></div>
+                  <div class="news-item"><div class="news-num">06</div><div class="news-content"><a class="news-title-link" href="https://www.kuaishou.com/about/" target="_blank">快手Q3总营收达356亿，可灵AI三季度营收超3亿，日活4.16亿创历史新高</a><p class="news-summary">快手Q3线上营销服务收入达201亿元，可灵AI新模型位居全球榜首。快手应用日活4.16亿再创历史新高。</p><div class="news-footer"><span class="news-source-tag">快手官方</span><span class="news-date">2025-11</span></div></div></div>
+                  <div class="news-item"><div class="news-num">07</div><div class="news-content"><a class="news-title-link" href="https://www.kuai-ad.com/zixun/9323.html" target="_blank">快手磁力聚星618大促：百亿流量加持，助力商家降低运营成本激活新增量</a><p class="news-summary">以高额政策补贴、百亿流量加持，助力商家降低运营成本，大促期间整体GMV同比显著增长。</p><div class="news-footer"><span class="news-source-tag">快手广告平台</span><span class="news-date">2025-05-15</span></div></div></div>
+                  <div class="news-item"><div class="news-num">08</div><div class="news-content"><a class="news-title-link" href="https://tidenews.com.cn/news.html?id=2808546" target="_blank">激活达人价值，快手磁力聚星入驻达人数突破460万</a><p class="news-summary">快手磁力聚星入驻达人数突破460万，平台规模持续扩大，为品牌提供更丰富的达人资源池。</p><div class="news-footer"><span class="news-source-tag">tideNews</span><span class="news-date">2024-05-30</span></div></div></div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">User Feedback</div>
+                <div class="news-list">
+                  <div class="news-item"><div class="news-num">01</div><div class="news-content"><a class="news-title-link" href="https://www.zhihu.com/question/638477542" target="_blank">快手磁力聚星团长申请开通指南：条件与注意事项</a><p class="news-summary">磁力聚星平台是快手官方唯一达人生态营销平台。创作者普遍认可平台安全性，但也反映部分规则调整较为频繁。</p><div class="news-footer"><span class="news-source-tag">知乎</span></div></div></div>
+                  <div class="news-item"><div class="news-num">02</div><div class="news-content"><a class="news-title-link" href="https://m.ukezhitan.com/article-u63A5u5355u8D44u8BAF/16365" target="_blank">快手达人接单平台对比：官方磁力聚星安全可靠，稳定性强</a><p class="news-summary">磁力聚星适合追求稳定安全的达人使用，平台结算规范，2025年后结算周期有所优化。</p><div class="news-footer"><span class="news-source-tag">自媒体百科</span></div></div></div>
+                  <div class="news-item"><div class="news-num">03</div><div class="news-content"><a class="news-title-link" href="https://www.kuai-ad.com/jd/8859.html" target="_blank">什么是磁力聚星？快手广告平台达人营销变现全解析</a><p class="news-summary">磁力聚星是快手达人生态营销平台，达人反映接单效率较高，但品牌预算分布不均匀。</p><div class="news-footer"><span class="news-source-tag">快手广告平台</span></div></div></div>
+                  <div class="news-item"><div class="news-num">04</div><div class="news-content"><a class="news-title-link" href="https://www.ikuju.com/archives/6277" target="_blank">快手「磁力聚星」公私域流量打通：作品正式接入发现页公域流量</a><p class="news-summary">达人作品在保留私域分发的基础上正式接入公域流量，公私域打通后达人曝光量明显提升。</p><div class="news-footer"><span class="news-source-tag">科技资讯</span></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="platform-sidebar">
+              <div class="sub-card">
+                <div class="sub-card-title">Core Strengths</div>
+                <div class="strength-list">
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF6900"></span>下沉市场渗透率最高，三四线城市用户基础深厚</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF6900"></span>老铁经济社区信任度高，电商复购率突出</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF6900"></span>短视频+直播双栖生态，达人变现路径短</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF6900"></span>私域流量运营能力行业领先（粉丝团等）</div>
+                  <div class="strength-item"><span class="strength-dot" style="background:#FF6900"></span>信任电商模式独特，直播带货转化效率高</div>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Product Roadmap</div>
+                <div class="tag-cloud">
+                  <span class="dir-tag" style="border-color:rgba(255,105,0,.25);color:#FF6900;background:rgba(255,105,0,.06)">AI技术落地</span>
+                  <span class="dir-tag" style="border-color:rgba(255,105,0,.25);color:#FF6900;background:rgba(255,105,0,.06)">品聚营销</span>
+                  <span class="dir-tag" style="border-color:rgba(255,105,0,.25);color:#FF6900;background:rgba(255,105,0,.06)">公私域打通</span>
+                  <span class="dir-tag" style="border-color:rgba(255,105,0,.25);color:#FF6900;background:rgba(255,105,0,.06)">短剧营销</span>
+                  <span class="dir-tag" style="border-color:rgba(255,105,0,.25);color:#FF6900;background:rgba(255,105,0,.06)">可灵AI工具</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="sub-card">
+                <div class="sub-card-title">Competitors</div>
+                <div class="tag-cloud">
+                  <span class="rival-tag">巨量星图</span>
+                  <span class="rival-tag">B站花火</span>
+                  <span class="rival-tag">小红书蒲公英</span>
+                </div>
+              </div>
+              <div class="sub-card-divider"></div>
+              <div class="insight" style="border-left-color:#FF6900">
+                快手磁力聚星2025–2026年产品全面升级，达人数突破460万。2026年重点聚焦AI技术落地、品聚营销和内容三大方向。可灵AI表现突出，Q3营收超3亿元。日活4.16亿创历史新高，公私域流量打通取得显著成果。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <span class="footer-note">数据来源于公开信息聚合，仅供参考 · 每日 11:00 自动更新</span>
+      <span class="footer-brand">Powered by WorkBuddy Agent · 2026</span>
+    </footer>
+
+  </main>
+</div><!-- /app-shell -->
+
+<script>
+// ─── Matrix Data ───
+const DIMS = ['用户规模','内容深度','社区粘性','商业化成熟度','算法精准度','电商闭环','品牌价值','创作者生态'];
+const PLATFORMS = [
+  { key:'bilibili', color:'#00A1D6', scores:[3,5,5,3,3,2,4,5] },
+  { key:'douyin',   color:'#FE2C55', scores:[5,3,3,5,5,5,4,4] },
+  { key:'xhs',      color:'#FF2442', scores:[3,4,4,4,4,3,5,4] },
+  { key:'ks',       color:'#FF6900', scores:[4,3,4,4,4,4,3,3] },
+];
+
+// ─── Render Matrix Table ───
+(function buildTable() {
+  const tbody = document.getElementById('matrix-tbody');
+  DIMS.forEach(dim => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="dim-name">${dim}</td>` + PLATFORMS.map(p => {
+      const dots = Array.from({length:5}, (_,i) => `<span class="dot ${i<p.scores[DIMS.indexOf(dim)]?'dot-on':'dot-off'}" style="background:${p.color}"></span>`).join('');
+      return `<td><div class="score-row"><span class="dots">${dots}</span><span class="score-label">${p.scores[DIMS.indexOf(dim)]}/5</span></div></td>`;
+    }).join('');
+    tbody.appendChild(tr);
+  });
+})();
+
+// ─── Switch View ───
+function switchView(v) {
+  const tableEl = document.getElementById('view-table');
+  const radarEl = document.getElementById('view-radar');
+  const btnT = document.getElementById('btn-table');
+  const btnR = document.getElementById('btn-radar');
+  if (v === 'table') {
+    tableEl.style.display = '';
+    radarEl.classList.remove('active');
+    btnT.classList.add('active');
+    btnR.classList.remove('active');
+  } else {
+    tableEl.style.display = 'none';
+    radarEl.classList.add('active');
+    btnT.classList.remove('active');
+    btnR.classList.add('active');
+    if (!document.getElementById('radar-svg-wrap').querySelector('svg')) buildRadar();
+  }
+}
+
+// ─── Build Radar SVG ───
+function buildRadar() {
+  const W = 380, H = 380, cx = 190, cy = 190, R = 140;
+  const n = DIMS.length;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+
+  const angle = i => (Math.PI * 2 * i / n) - Math.PI / 2;
+  const pt = (i, r) => [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
+
+  // Grid rings
+  [1,2,3,4,5].forEach(ring => {
+    const r = R * ring / 5;
+    const pts = Array.from({length:n}, (_,i) => pt(i,r).join(',')).join(' ');
+    const poly = document.createElementNS(ns, 'polygon');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('fill', 'none');
+    poly.setAttribute('stroke', `rgba(255,255,255,${0.03 + ring*0.01})`);
+    poly.setAttribute('stroke-width', '1');
+    svg.appendChild(poly);
+  });
+
+  // Axes
+  Array.from({length:n}, (_,i) => {
+    const line = document.createElementNS(ns, 'line');
+    const [x1,y1] = [cx, cy]; const [x2,y2] = pt(i, R);
+    Object.assign(line, {});
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(255,255,255,0.06)'); line.setAttribute('stroke-width','1');
+    svg.appendChild(line);
+  });
+
+  // Data shapes
+  PLATFORMS.forEach(p => {
+    const pts = p.scores.map((s,i) => pt(i, R * s / 5).join(',')).join(' ');
+    const poly = document.createElementNS(ns, 'polygon');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('fill', p.color); poly.setAttribute('fill-opacity', '0.07');
+    poly.setAttribute('stroke', p.color); poly.setAttribute('stroke-opacity', '0.7');
+    poly.setAttribute('stroke-width', '1.5');
+    poly.dataset.key = p.key;
+    poly.classList.add('radar-shape');
+    svg.appendChild(poly);
+  });
+
+  // Axis labels
+  DIMS.forEach((dim, i) => {
+    const [lx, ly] = pt(i, R + 22);
+    const text = document.createElementNS(ns, 'text');
+    text.setAttribute('x', lx); text.setAttribute('y', ly);
+    text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','middle');
+    text.setAttribute('fill','rgba(160,155,180,0.55)');
+    text.setAttribute('font-size','10'); text.setAttribute('font-weight','500');
+    text.textContent = dim;
+    svg.appendChild(text);
+  });
+
+  document.getElementById('radar-svg-wrap').appendChild(svg);
+}
+
+// ─── Radar Hover ───
+function radarHL(key, on) {
+  document.querySelectorAll('.radar-shape').forEach(el => {
+    if (on) {
+      el.style.fillOpacity = el.dataset.key === key ? '0.18' : '0.03';
+      el.style.strokeOpacity = el.dataset.key === key ? '1' : '0.15';
+      el.style.strokeWidth = el.dataset.key === key ? '2' : '1';
+    } else {
+      el.style.fillOpacity = '0.07';
+      el.style.strokeOpacity = '0.7';
+      el.style.strokeWidth = '1.5';
+    }
+  });
+}
+
+// ─── Sidebar Active Link ───
+const sections = document.querySelectorAll('.section[id], .matrix-block[id]');
+const links = document.querySelectorAll('.sidebar-link');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('[id]').forEach(s => {
+  if (['competitive-matrix','bilibili_huohuo','douyin_xingtu','xiaohongshu_pugongying','kuaishou_cilijuXing'].includes(s.id)) {
+    observer.observe(s);
+  }
+});
+</script>
+</body>
+</html>
