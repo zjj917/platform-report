@@ -299,11 +299,11 @@ body {
 
 /* ─── Page Header ─── */
 .page-hero {
-  padding: 40px;
+  padding: 48px 48px 40px;
   border-radius: var(--radius-xl);
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(20, 20, 25, 0.95) 100%);
   border: 1px solid var(--border);
-  box-shadow: 0 0 40px rgba(0,0,0,0.3);
+  box-shadow: 0 0 60px rgba(0,0,0,0.4);
   position: relative;
   overflow: hidden;
 }
@@ -311,12 +311,101 @@ body {
 .page-hero::before {
   content: '';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 400px;
-  height: 300px;
-  background: radial-gradient(ellipse at top right, rgba(99, 102, 241, 0.08), transparent 70%);
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.05), transparent 60%);
+  animation: pulse-glow 8s ease-in-out infinite;
   pointer-events: none;
+}
+
+.page-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.1), transparent 60%);
+  animation: pulse-glow 10s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.hero-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(99, 102, 241, 0.03) 20%, 
+    rgba(139, 92, 246, 0.05) 40%,
+    rgba(59, 130, 246, 0.03) 60%,
+    rgba(99, 102, 241, 0.03) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shine 12s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.hero-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-particles::before,
+.hero-particles::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 50%;
+  animation: float-particle 15s ease-in-out infinite;
+}
+
+.hero-particles::before {
+  top: 20%;
+  left: 30%;
+  animation-delay: 0s;
+}
+
+.hero-particles::after {
+  top: 60%;
+  right: 25%;
+  animation-delay: -5s;
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  25% { transform: translate(30px, -20px) scale(1.2); opacity: 0.8; }
+  50% { transform: translate(10px, -40px) scale(0.8); opacity: 0.6; }
+  75% { transform: translate(-20px, -20px) scale(1.1); opacity: 0.9; }
+}
+
+.title-accent {
+  background: linear-gradient(90deg, #818cf8, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .page-hero-eyebrow {
@@ -337,26 +426,41 @@ body {
 .eyebrow-sep { color: var(--text-tertiary); opacity: .3; }
 
 .page-hero h1 {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   line-height: 1.2;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .page-hero-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
-  max-width: 560px;
-  line-height: 1.6;
+  max-width: 600px;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+}
+
+.page-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .platform-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 20px;
+  gap: 8px;
+  margin-top: 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .platform-pill {
@@ -629,6 +733,100 @@ body {
   color: var(--text-tertiary);
 }
 
+/* ─── AI Summary ─── */
+.ai-summary {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent), #8b5cf6);
+}
+
+.ai-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ai-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #6366f1);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+.ai-summary-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-left: auto;
+}
+
+.ai-summary-content {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.ai-summary-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ai-summary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ai-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+}
+
 /* ─── Insight ─── */
 .insight {
   padding: 16px 18px;
@@ -712,37 +910,28 @@ body {
   color: var(--text-primary);
 }
 
-/* View toggle */
-.view-toggle {
+/* Matrix Combo Layout */
+.matrix-combo {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.matrix-radar-section {
   display: flex;
-  border-radius: var(--radius-sm);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  margin-left: auto;
-}
-
-.view-btn {
-  padding: 5px 12px;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all .15s;
-  font-family: var(--font);
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 20px;
 }
 
-.view-btn:hover { color: var(--text-secondary); }
+.matrix-radar-section .radar-wrap {
+  width: 320px;
+  height: 320px;
+}
 
-.view-btn.active {
-  background: var(--bg-app);
-  color: var(--text-primary);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+.matrix-table-section {
+  overflow-x: auto;
 }
 
 /* Matrix Table */
@@ -810,15 +999,14 @@ body {
   font-weight: 500;
 }
 
-/* Radar View */
-.radar-view {
-  display: none;
-  padding: 28px 32px 32px;
+/* Radar Legend */
+.radar-legend { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px; 
+  min-width: 160px;
+  width: 100%;
 }
-
-.radar-view.active { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
-
-.radar-legend { display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
 
 .legend-item {
   display: flex;
@@ -841,10 +1029,15 @@ body {
 }
 
 .legend-name { font-weight: 500; flex: 1; }
-.legend-avg { font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.legend-avg { font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; font-weight: 600; }
 
 /* Radar axis labels */
-.radar-wrap { position: relative; }
+.radar-wrap { 
+  position: relative; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .radar-axis-label {
   position: absolute;
   font-size: 10.5px;
@@ -1003,12 +1196,14 @@ a { color: inherit; }
 
     <!-- Page Hero -->
     <div class="page-hero">
+      <div class="hero-glow"></div>
+      <div class="hero-particles"></div>
       <div class="page-hero-eyebrow">
         <span class="eyebrow-chip">Daily Monitor</span>
         <span class="eyebrow-sep">·</span>
         <span class="eyebrow-chip">2026-03-27</span>
       </div>
-      <h1>Platform Intelligence·情报追踪系统</h1>
+      <h1>Platform Intelligence<span class="title-accent">·情报追踪</span></h1>
       <p class="page-hero-desc">
         追踪 B站花火、巨量星图、小红书蒲公英、快手磁力聚星的最新动态与市场洞察。
         每日 11:00 自动更新，数据来源于公开信息聚合。
@@ -1026,67 +1221,52 @@ a { color: inherit; }
       <!-- ── Competitive Matrix ── -->
       <div class="section" id="competitive-matrix">
         <div class="section-head">
-          <h2>Competitive Matrix</h2>
+          <h2>平台综合评分矩阵</h2>
           <span class="section-tag">4 Platforms · 8 Dimensions</span>
         </div>
-        <div class="section-divider"></div>
 
-        <div class="matrix-block">
-          <div class="matrix-head">
-            <h2>平台综合评分矩阵</h2>
-            <div class="view-toggle">
-              <button class="view-btn active" id="btn-table" onclick="switchView('table')">
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="0" y="0" width="5" height="5" rx="1"/><rect x="7" y="0" width="5" height="5" rx="1"/><rect x="0" y="7" width="5" height="5" rx="1"/><rect x="7" y="7" width="5" height="5" rx="1"/></svg>
-                表格
-              </button>
-              <button class="view-btn" id="btn-radar" onclick="switchView('radar')">
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="6,1 11,3.8 11,8.2 6,11 1,8.2 1,3.8"/></svg>
-                雷达图
-              </button>
-            </div>
-          </div>
-
-          <div id="view-table">
-            <div class="matrix-table-wrap">
-              <table class="matrix-table">
-                <thead>
-                  <tr>
-                    <th>维度</th>
-                    <th style="color:#00A1D6">📺 B站花火</th>
-                    <th style="color:#FE2C55">🌟 巨量星图</th>
-                    <th style="color:#FF2442">📕 蒲公英</th>
-                    <th style="color:#FF6900">⚡ 磁力聚星</th>
-                  </tr>
-                </thead>
-                <tbody id="matrix-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="radar-view" id="view-radar">
-            <div class="radar-wrap" id="radar-svg-wrap" style="width:380px;height:380px"><!-- SVG injected by JS --></div>
+        <div class="matrix-combo">
+          <!-- 左侧：雷达图 -->
+          <div class="matrix-radar-section">
+            <div class="radar-wrap" id="radar-svg-wrap"><!-- SVG injected by JS --></div>
             <div class="radar-legend">
               <div class="legend-item" onmouseenter="radarHL('bilibili',true)" onmouseleave="radarHL('bilibili',false)">
                 <div class="legend-dot" style="background:#00A1D6"></div>
                 <span class="legend-name">📺 B站花火</span>
-                <span class="legend-avg">avg 3.8</span>
+                <span class="legend-avg">3.8</span>
               </div>
               <div class="legend-item" onmouseenter="radarHL('douyin',true)" onmouseleave="radarHL('douyin',false)">
                 <div class="legend-dot" style="background:#FE2C55"></div>
                 <span class="legend-name">🌟 巨量星图</span>
-                <span class="legend-avg">avg 4.2</span>
+                <span class="legend-avg">4.2</span>
               </div>
               <div class="legend-item" onmouseenter="radarHL('xhs',true)" onmouseleave="radarHL('xhs',false)">
                 <div class="legend-dot" style="background:#FF2442"></div>
-                <span class="legend-name">📕 小红书蒲公英</span>
-                <span class="legend-avg">avg 3.9</span>
+                <span class="legend-name">📕 蒲公英</span>
+                <span class="legend-avg">3.9</span>
               </div>
               <div class="legend-item" onmouseenter="radarHL('ks',true)" onmouseleave="radarHL('ks',false)">
                 <div class="legend-dot" style="background:#FF6900"></div>
-                <span class="legend-name">⚡ 快手磁力聚星</span>
-                <span class="legend-avg">avg 3.6</span>
+                <span class="legend-name">⚡ 磁力聚星</span>
+                <span class="legend-avg">3.6</span>
               </div>
             </div>
+          </div>
+          
+          <!-- 右侧：评分表格 -->
+          <div class="matrix-table-section">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>维度</th>
+                  <th style="color:#00A1D6">📺</th>
+                  <th style="color:#FE2C55">🌟</th>
+                  <th style="color:#FF2442">📕</th>
+                  <th style="color:#FF6900">⚡</th>
+                </tr>
+              </thead>
+              <tbody id="matrix-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1097,7 +1277,23 @@ a { color: inherit; }
           <h2>B站花火</h2>
           <span class="section-tag">8 条动态 · 4 条反馈</span>
         </div>
-        <div class="section-divider"></div>
+        
+        <!-- AI提炼摘要 -->
+        <div class="ai-summary" style="border-left-color: #00A1D6;">
+          <div class="ai-summary-header">
+            <span class="ai-badge">AI 提炼</span>
+            <span class="ai-summary-time">2026-03-27</span>
+          </div>
+          <div class="ai-summary-content">
+            <strong>B站花火</strong>近期重点发力<strong>种草-转化闭环</strong>建设，X火计划成效初显。平台坚持<strong>不向UP主收佣金</strong>的差异化策略，吸引更多创作者入驻。评论区蓝链跳转小程序的升级，标志着电商转化能力进一步强化。2026年预计在<strong>直播带货</strong>整合方向有更大动作。
+          </div>
+          <div class="ai-summary-tags">
+            <span class="ai-tag">🔗 种草闭环</span>
+            <span class="ai-tag">💰 零佣金</span>
+            <span class="ai-tag">📱 蓝链升级</span>
+            <span class="ai-tag">🎯 Z世代</span>
+          </div>
+        </div>
         <div class="platform-block">
           <div class="platform-header">
             <div class="platform-icon">📺</div>
@@ -1191,7 +1387,23 @@ a { color: inherit; }
           <h2>巨量星图</h2>
           <span class="section-tag">8 条动态 · 5 条反馈</span>
         </div>
-        <div class="section-divider"></div>
+        
+        <!-- AI提炼摘要 -->
+        <div class="ai-summary" style="border-left-color: #FE2C55;">
+          <div class="ai-summary-header">
+            <span class="ai-badge">AI 提炼</span>
+            <span class="ai-summary-time">2026-03-27</span>
+          </div>
+          <div class="ai-summary-content">
+            <strong>巨量星图</strong>2026年核心战略围绕<strong>AIGC工具链</strong>全面升级，星广联投、看后搜等功能显著提升投放效率。依托抖音<strong>7亿+日活</strong>流量，商业化成熟度领跑行业。2026味加码IP成功打造情绪营销标杆，实现从共鸣到转化的完整闭环。
+          </div>
+          <div class="ai-summary-tags">
+            <span class="ai-tag">🤖 AIGC工具</span>
+            <span class="ai-tag">🎬 短直联动</span>
+            <span class="ai-tag">📊 星广联投</span>
+            <span class="ai-tag">💫 情绪营销</span>
+          </div>
+        </div>
         <div class="platform-block">
           <div class="platform-header">
             <div class="platform-icon">🌟</div>
@@ -1280,7 +1492,23 @@ a { color: inherit; }
           <h2>小红书蒲公英</h2>
           <span class="section-tag">8 条动态 · 5 条反馈</span>
         </div>
-        <div class="section-divider"></div>
+        
+        <!-- AI提炼摘要 -->
+        <div class="ai-summary" style="border-left-color: #FF2442;">
+          <div class="ai-summary-header">
+            <span class="ai-badge">AI 提炼</span>
+            <span class="ai-summary-time">2026-03-27</span>
+          </div>
+          <div class="ai-summary-content">
+            <strong>小红书蒲公英</strong>正式进入<strong>商业流量时代</strong>，付费内容获得算法优先权。营销市场规模达<strong>350亿元</strong>（同比+48%），种草能力持续领跑。情绪营销升级为科学方法论，<strong>KOS员工号</strong>和<strong>种草直达</strong>成为2026年核心产品方向。
+          </div>
+          <div class="ai-summary-tags">
+            <span class="ai-tag">💰 350亿市场</span>
+            <span class="ai-tag">📈 付费流量</span>
+            <span class="ai-tag">👥 KOS员工号</span>
+            <span class="ai-tag">🎯 种草直达</span>
+          </div>
+        </div>
         <div class="platform-block">
           <div class="platform-header">
             <div class="platform-icon">📕</div>
@@ -1369,7 +1597,23 @@ a { color: inherit; }
           <h2>快手磁力聚星</h2>
           <span class="section-tag">8 条动态 · 4 条反馈</span>
         </div>
-        <div class="section-divider"></div>
+        
+        <!-- AI提炼摘要 -->
+        <div class="ai-summary" style="border-left-color: #FF6900;">
+          <div class="ai-summary-header">
+            <span class="ai-badge">AI 提炼</span>
+            <span class="ai-summary-time">2026-03-27</span>
+          </div>
+          <div class="ai-summary-content">
+            <strong>快手磁力聚星</strong>2026年聚焦<strong>AI技术落地</strong>和公私域流量打通，<strong>可灵AI</strong>表现突出（Q3营收超3亿）。平台日活达<strong>4.16亿</strong>历史新高。达人数突破<strong>460万</strong>，信任电商模式持续深化下沉市场优势。
+          </div>
+          <div class="ai-summary-tags">
+            <span class="ai-tag">🤖 AI落地</span>
+            <span class="ai-tag">📱 公私域打通</span>
+            <span class="ai-tag">👥 460万达人</span>
+            <span class="ai-tag">💫 日活4.16亿</span>
+          </div>
+        </div>
         <div class="platform-block">
           <div class="platform-header">
             <div class="platform-icon">⚡</div>
@@ -1485,29 +1729,14 @@ const PLATFORMS = [
   });
 })();
 
-// ─── Switch View ───
-function switchView(v) {
-  const tableEl = document.getElementById('view-table');
-  const radarEl = document.getElementById('view-radar');
-  const btnT = document.getElementById('btn-table');
-  const btnR = document.getElementById('btn-radar');
-  if (v === 'table') {
-    tableEl.style.display = '';
-    radarEl.classList.remove('active');
-    btnT.classList.add('active');
-    btnR.classList.remove('active');
-  } else {
-    tableEl.style.display = 'none';
-    radarEl.classList.add('active');
-    btnT.classList.remove('active');
-    btnR.classList.add('active');
-    if (!document.getElementById('radar-svg-wrap').querySelector('svg')) buildRadar();
-  }
-}
+// ─── Auto Build Radar on Load ───
+document.addEventListener('DOMContentLoaded', function() {
+  buildRadar();
+});
 
-// ─── Build Radar SVG ───
+// ─── Build Radar SVG (Combo Layout) ───
 function buildRadar() {
-  const W = 380, H = 380, cx = 190, cy = 190, R = 140;
+  const W = 320, H = 320, cx = 160, cy = 160, R = 120;
   const n = DIMS.length;
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
