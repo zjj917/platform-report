@@ -3,6 +3,15 @@
   "sessions": {
     "1294562d5c8b402fb8a889bee7ca7f06": [
       {
+        "expertId": "AdortDesignExpert",
+        "name": "林觉初",
+        "profession": "Adort 设计专家",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/01-Design/AdortDesignExpert/AdortDesignExpert.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/01-Design/AdortDesignExpert/AdortDesignExpert_zh.md",
+        "usedAt": 1774610249291,
+        "industryId": "01-Design"
+      },
+      {
         "expertId": "AiEngineer",
         "name": "Amy",
         "profession": "AI工程师",
@@ -13,5 +22,5 @@
       }
     ]
   },
-  "lastUpdated": 1774599783393
+  "lastUpdated": 1774610349985
 }

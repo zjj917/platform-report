@@ -281,12 +281,26 @@ body {
   grid-area: main;
   overflow: hidden;
   min-height: calc(100vh - var(--header-h));
+  background: var(--bg-app);
+  padding: 24px;
+}
+
+/* ─── Linear-style Layered Container ─── */
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* ─── Page Header ─── */
 .page-hero {
-  padding: 40px 40px 32px;
-  border-bottom: 1px solid var(--border);
+  padding: 32px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .page-hero-eyebrow {
@@ -353,19 +367,27 @@ body {
 
 /* ─── Content Area ─── */
 .content-area {
-  padding: 0 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* ─── Section ─── */
 .section {
-  padding-top: 40px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .section-head {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
 }
 
 .section-head h2 {
@@ -397,12 +419,15 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--bg-surface);
-  margin-bottom: 28px;
   overflow: hidden;
-  transition: border-color .2s;
+  transition: border-color .2s, box-shadow .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
-.platform-block:hover { border-color: var(--border-strong); }
+.platform-block:hover { 
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
 
 .platform-header {
   display: flex;
@@ -645,8 +670,8 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--bg-surface);
-  margin-bottom: 28px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .matrix-head {
@@ -809,13 +834,13 @@ body {
 
 /* ─── Footer ─── */
 .page-footer {
-  padding: 28px 40px;
-  border-top: 1px solid var(--border);
+  padding: 20px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: auto;
 }
 
 .footer-note {
@@ -839,9 +864,11 @@ body {
   .app-shell { grid-template-columns: 1fr; grid-template-areas: "topbar" "main"; }
   .sidebar { display: none; }
   .topbar-logo { width: auto; border-right: none; }
-  .content-area { padding: 0 20px 40px; }
-  .page-hero { padding: 24px 20px 20px; }
+  .main { padding: 16px; }
+  .content-wrapper { gap: 16px; }
+  .page-hero { padding: 20px; }
   .page-hero h1 { font-size: 20px; }
+  .section { padding: 16px; }
 }
 
 /* ─── Animations ─── */
@@ -850,14 +877,16 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.platform-block {
+.page-hero, .section {
   animation: fade-up .3s ease both;
 }
 
-.platform-block:nth-child(1) { animation-delay: .05s; }
-.platform-block:nth-child(2) { animation-delay: .10s; }
-.platform-block:nth-child(3) { animation-delay: .15s; }
-.platform-block:nth-child(4) { animation-delay: .20s; }
+.page-hero { animation-delay: .02s; }
+.section:nth-child(1) { animation-delay: .05s; }
+.section:nth-child(2) { animation-delay: .08s; }
+.section:nth-child(3) { animation-delay: .11s; }
+.section:nth-child(4) { animation-delay: .14s; }
+.section:nth-child(5) { animation-delay: .17s; }
 
 /* ─── Misc Utility ─── */
 .visually-hidden {
@@ -945,6 +974,7 @@ a { color: inherit; }
 
   <!-- ───────────── MAIN ───────────── -->
   <main class="main">
+    <div class="content-wrapper">
 
     <!-- Page Hero -->
     <div class="page-hero">
@@ -1396,8 +1426,8 @@ a { color: inherit; }
         </div>
       </div>
 
-    </div><!-- /content-area -->
-
+    </div><!-- /content-wrapper -->
+    
     <!-- Footer -->
     <footer class="page-footer">
       <span class="footer-note">数据来源于公开信息聚合，仅供参考 · 每日 11:00 自动更新</span>
